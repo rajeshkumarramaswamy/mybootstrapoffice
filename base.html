@@ -1,0 +1,229 @@
+ 	{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/datepicker.css" rel="stylesheet" type="text/css">
+    <!--<link href="/static/css/custom.css" rel="stylesheet">-->
+    <!--<link src="/static/css/navbar-fixed-top.css" rel="stylesheet">-->
+
+  <style>
+	.form-inline {
+		padding-top: 60px;	
+	}
+  </style>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><strong>Netenrich Nerve Center</strong></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{% url 'layout' %}">Dashboard</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <form class="form-inline">
+      <div class="form-group">
+          <label class="col-xs-11 col-md-8">Productlines</label>
+          <select class="col-xs-11 col-md-8" id="json-one">
+              <option>--Select--</option>
+              {% for key in productlines_data %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+          </select>
+      </div>
+      <div class="form-group">
+          <label class="col-xs-11 col-md-8">Product</label>
+          <select class="col-xs-11 col-md-8" id="json-two">
+               <option>--Select--</option>
+              {% for key in product_data %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+          </select>
+      </div>
+  </form>
+
+    <div id="checkboxes">
+       	<label class="checkbox-inline" id="select3">
+  	<input type="checkbox" id="orderdate" > Order
+  	</label>
+	<label class="checkbox-inline" id="select4">
+  	<input type="checkbox" id="payment" > Payment
+  	</label>      
+    </div>
+    <div class="col-md-2" id="select4">
+	<input type="text" class="form-control" data-provide="datepicker" id="dp1" min="2003-01-06" max="2005-05-31" placeholder="From" hidden />
+        <input type="text" class="form-control" data-provide="datepicker" id="dp2" min="2003-01-06" max="2005-05-31" placeholder="To" hidden />
+    </div>
+
+    <div class="col-md-2">
+        <div class='input-group' id='dp3'>
+    	    <input type='text' class="form-control" data-provide="datepicker" placeholder="Payment" />
+     </div>
+    </div>
+    
+    <div id="multiselect">
+        <select multiple class="col-xs-2" id="json-three">
+            <option>--Select--</option>
+            {% for key in emp_records_output %}
+                <option value="{{ key }}">{{ key }}</option>
+            {% endfor %}
+        </select>
+    </div>
+	<br>
+    <input class="btn btn-default btn btn-primary" type="submit" id="but">
+    <div id="re"></div>
+		
+
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+    <script type='text-jquery-tmpl' id="t_tmpl">
+    	{% include "table.tmpl" %}
+    	</script>
+
+	<script type='text/javascript'>
+
+	/*var order_date_vs_orders = {{ order_date_vs_orders | safe }};*/
+    	$(function() {
+
+	var json1;
+	var json2;
+	var json3;
+        $('#json-one').change(function () {
+            var mydict = {{ prod_and_lines | safe }};
+            var $jsonone = $('#json-one').val();
+	    json1 = $('#json-one').val();
+            vals = mydict[$jsonone];
+            var $jsontwo = $("#json-two");
+            $jsontwo.empty();
+            $jsontwo.append("<option>--Select--</option>");
+            $.each(vals, function (index, value) {
+                $jsontwo.append("<option>" + value + "</option>");
+            });
+        });
+                /* var json1 = $('#json-one').val();
+                 var json2 = $("#json-two").val();
+                 var json3 = $("#json-three").val();*/
+
+
+                $('#json-two').change(function () {
+                    var product = $('#json-two').val();
+		    json2 = $('#json-two').val();
+                    console.log(product);
+                });
+
+                var from;
+                $('#dp1').change(function () {
+                    from = $(this).val();
+                    console.log(from);
+                });
+
+                var to;
+                $('#dp2').change(function () {
+                    to = $(this).val();
+                    console.log(to);
+                });
+                $('#dp3').change(function () {
+                    var payment = $(this).val();
+                    console.log(payment);
+                });
+
+                $('#json-three').change(function () {
+                    var salesrep = $('#json-three').val();
+                    json3 = $('#json-three').val();
+                    console.log(salesrep);
+                });
+
+		var tournamen_blk = $('#t_tmpl').text();
+		
+                $("#but").click(function () {
+                    if($('#json-one').val() == '--Select--' || $("#json-two").val() == '--Select--' || $("#json-three").val() == '--Select--' || from == '' || to == '' || from > to){
+                        alert("Please select all the fields.");
+                        return false;
+                    }else{
+			var x = _.template(tournamen_blk);
+			$.get('/display/', {
+                                    'json1': JSON.stringify(json1),
+                                    'json2': JSON.stringify(json2),
+                                    'json3': JSON.stringify(json3),
+                                    'from': JSON.stringify(from),
+                                    'to' : JSON.stringify(to),
+                                    }, function(res) {
+
+                	$('.loading').addClass('hide');
+                	console.log(res);
+
+                	$("#re").html(x({'res' : res}));
+                	$("#details").dataTable();
+
+            		});
+	
+			}	
+
+                });
+
+                $('input[type="checkbox"]').on('change', function () {
+                    $('input[type="checkbox"]').not(this).prop('checked', false);
+                });
+
+                $('#orderdate').click(function () {
+                    $("#dp1").toggle(this.checked);
+                    $("#dp2").toggle(this.checked);
+                });
+
+                $('#payment').click(function () {
+                    $("#dp3").toggle(this.checked);
+                    function hideElem() {
+                        document.getElementById("dp1").style.visibility = "hidden";
+                    }
+                    function hideElem() {
+                        document.getElementById("dp2").style.visibility = "hidden";
+                    }
+                    $('#orderdate').click(function () {
+                        function showElem() {
+                            document.getElementById("dp1").style.visibility = "visible";
+                        }
+                        function showElem() {
+                            document.getElementById("dp2").style.visibility = "visible";
+                        }
+                    });
+                });
+
+
+  });
+
+
+	</script>
+{% block content %} {% endblock %}
+{% block footer %}{% endblock %}
+</body>
+</html>
