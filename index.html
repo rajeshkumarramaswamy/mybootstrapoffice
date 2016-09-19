@@ -1,4 +1,5 @@
- 	{% load static from staticfiles %}
+{% load static from staticfiles %}
+{% load cache %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,47 +12,18 @@
     <title>Dashboard</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <!--<link href="/static/css/custom.css" rel="stylesheet">-->
     <!--<link src="/static/css/navbar-fixed-top.css" rel="stylesheet">-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
   <style>
-      #ddp2 {
-          float: right;
-      }
-      div#select1 {
-          float: left;
-          padding-left: 30px;
-          padding-top: 60px;
-      }
-      div#select2{
-          float: left;
-          padding-left: 20px;
-          padding-top: 40px;
-      }
-      div#select3 {
-          float: left;
-          padding-left: 40px;
-          padding-top: 60px;
-      }
-      div#select4 {
-          padding-left: 70px;
-          padding-top: 60px;
-          margin-left: 100px;
-      }
-      body{
-          max-height: 1000px;
-      }
-      div#checkboxes {
-          padding-top: 100px;
-      }
-      div#multiselect {
-          margin-top: 50px;
-          margin-left: 30px;
-      }
-      #but {
-          margin-left: 70px;
+      .container {
+          padding-top: 5px;
+          padding-bottom: 5px;
       }
   </style>
   </head>
@@ -59,80 +31,93 @@
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#"><strong>Netenrich Nerve Center</strong></a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="#about">About</a></li>
-                    <li><a href="{% url 'base' %}">Base</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{% url 'layout' %}">Dashboard</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div>
-    </nav>
-
-    <div id="select1">
-        <p><strong>Product Lines</strong></p>
-        <select id="json-one" required>
-            <option>--Select--</option>
-            {% for key in productlines_data %}
-                <option value="{{ key }}">{{ key }}</option>
-            {% endfor %}
-        </select>
+    <!--<nav class="navbar navbar-default navbar-fixed-top">-->
+    <div class="container">
+      <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        <a class="navbar-brand" href="#"><strong>Netenrich Nerve Center</strong></a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'layout' %}">Dashboard</a></li>
+            </ul>
+    </div><!--/.nav-collapse -->
     </div>
-    <br />
-
-    <div id="select2">
-        <p><strong>Product</strong></p>
-        <select id="json-two" required>
-            <option>--Select--</option>
-            {% for key in product_data %}
-                <option value="{{ key }}">{{ key }}</option>
-            {% endfor %}
-        </select>
+  <div class="container">
+      <form class="form-inline">
+          <div class="form-group">
+                <label class="col-xs-11 col-md-8">Productlines</label>
+                <select class="col-xs-11 col-md-8" data-live-search="true" id="json-one">
+                    <option>--Select--</option>
+                    {% for key in productlines_data %}
+                        <option value="{{ key }}">{{ key }}</option>
+                    {% endfor %}
+                </select>
+          </div>
+          <div class="form-group">
+                <label class="col-xs-11 col-md-8">Product</label>
+                <select class="col-xs-11 col-md-8" data-live-search="true" id="json-two">
+                    <option>--Select--</option>
+                    {% for key in product_data %}
+                        <option value="{{ key }}">{{ key }}</option>
+                    {% endfor %}
+                </select>
+          </div>
+      </form>
     </div>
-
-    <div id="checkboxes">
-        <div id="select3">
+    <br>
+  <div class="container">
+    <div class="row">
+        <div class="checkbox-inline" id="select3">
             <input type="checkbox" id="orderdate" /> Order date
-            <input type="date" id="dp1" min="2003-01-06" max="2005-05-31" placeholder="From" hidden />
-            <input type="date" id="dp2" min="2003-01-06" max="2005-05-31" placeholder="To" hidden />
         </div>
-
-        <div id="select4">
+        <div class="checkbox-inline" id="select4">
             <input type="checkbox" id="payment" /> Payment date
-            <input type="date" id="dp3" hidden />
         </div>
     </div>
-    <div id="multiselect">
-        <select id="json-three" multiple>
+  </div>
+    <br>
+  <div class="container">
+    <div class="form-inline p-l-3">
+        <input type="date" id="dp1" min="2003-01-06" max="2005-05-31" aria-label="From" hidden />
+        <input type="date" id="dp2" min="2003-01-06" max="2005-05-31" placeholder="To" hidden />
+        <input type="date" id="dp3" hidden />
+    </div>
+  </div>
+    <br>
+
+  <div class="container">
+    <div class="col-lg-11" id="multiselect">
+    <select multiple class="col-xs-2" data-live-search="true" id="json-three">
+{#        <select id="json-three" multiple>#}
             <option>--Select--</option>
             {% for key in emp_records_output %}
                 <option value="{{ key }}">{{ key }}</option>
             {% endfor %}
-        </select>
+    </select>
     </div>
-	<br>
-    <button id="but">Submit</button>
+  </div>
 
-<div id="re"></div>
-		
+    <div class="container">
+    <button class="btn btn-default btn btn-primary" id="but">Submit</button>
+    </div>
+    <br><br>
+  <div id="re"></div>
 
 	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<script type='text-jquery-tmpl' id="t_tmpl">
             {% include "table.tmpl" %}
     	</script>
@@ -164,7 +149,7 @@
 
                 $('#json-two').change(function () {
                     var product = $('#json-two').val();
-		    json2 = $('#json-two').val();
+                    json2 = $('#json-two').val();
                     console.log(product);
                 });
 
@@ -196,7 +181,8 @@
                     if($('#json-one').val() == '--Select--' || $("#json-two").val() == '--Select--' || $("#json-three").val() == '--Select--' || from == '' || to == '' || from > to){
                         alert("Please select all the fields.");
                         return false;
-                    }else{
+                    }
+		    else{
 			var x = _.template(tournamen_blk);
 			$.get('/display/', {
                                     'json1': JSON.stringify(json1),
@@ -206,15 +192,15 @@
                                     'to' : JSON.stringify(to),
                                     }, function(res) {
 
-                	$('.loading').addClass('hide');
-                	console.log(res);
+                $('.loading').addClass('hide');
+                console.log(res);
 
-                	$("#re").html(x({'res' : res}));
-                	$("#details").dataTable();
+                $("#re").html(x({'res' : res}));
+                $("#details").dataTable();
 
-            		});
+            });
 	
-			}	
+		}
 
                 });
 
@@ -235,15 +221,21 @@
                     function hideElem() {
                         document.getElementById("dp2").style.visibility = "hidden";
                     }
-                    $('#orderdate').click(function () {
-                        function showElem() {
-                            document.getElementById("dp1").style.visibility = "visible";
-                        }
-                        function showElem() {
-                            document.getElementById("dp2").style.visibility = "visible";
-                        }
-                    });
+                $('#orderdate').click(function () {
+                    function showElem() {
+                        document.getElementById("dp1").style.visibility = "visible";
+                    }
+                    function showElem() {
+                        document.getElementById("dp2").style.visibility = "visible";
+                    }
                 });
+                });
+        $('select[multiple]').multiselect({
+            search : false,
+            texts: {
+            placeholder: 'Select options'
+        }
+});
 
 
   });
