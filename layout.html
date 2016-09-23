@@ -1,6 +1,5 @@
 {% load static from staticfiles %}
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +11,8 @@
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <!--<link href="/static/css/custom.css" rel="stylesheet">-->
     <!--<link src="/static/css/navbar-fixed-top.css" rel="stylesheet">-->
     <style>
@@ -36,6 +37,9 @@
             width: 200px;
             margin-left: 30px;
         }
+        #dp3{
+            margin-left: 20px;
+        }
         #endDate {
             width: 200px;
             margin-left: 30px;
@@ -48,13 +52,13 @@
 
   </head>
 
-  <body>
+  <>
   <form class="form-inline">
       <div class="form-group">
           <label class="col-xs-11 col-md-8">Productlines</label>
           <select class="col-xs-11 col-md-8" id="json-one">
               <option>--Select--</option>
-              {% for key in productlines_data %}
+              {% for key in layout_productlines_data %}
                 <option value="{{ key }}">{{ key }}</option>
             {% endfor %}
           </select>
@@ -63,7 +67,7 @@
           <label class="col-xs-11 col-md-8">Product</label>
           <select class="col-xs-11 col-md-8" id="json-two">
                <option>--Select--</option>
-              {% for key in product_data %}
+              {% for key in layout_product_data %}
                 <option value="{{ key }}">{{ key }}</option>
             {% endfor %}
           </select>
@@ -78,25 +82,25 @@
   </label>
   <br>
 
+
   <div class="row">
-
-          <div class='input-group date col-md-1'>
-              <input type='text' class="form-control" id="dp1" placeholder="From" />
-              <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-          </div>
-
-          <div class='input-group date col-md-1'>
-              <input type='text' class="form-control" id='dp2' placeholder="To" />
-              <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+       <div class="form-inline">
+          <div class='input-group input-append date col-md-1' id="datepicker">
+              <input type='text' class="datepicker" data-provide="datepicker-inline" placeholder="From" />
           </div>
 
 
-          <div class='input-group date col-md-1'>
-              <input type='text' class="form-control" id='dp3' />
-              <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+          <div class='input-group input-append date col-md-1' id="dp2">
+              <input type='text' class="datepicker" data-provide="datepicker-inline" placeholder="To" />
           </div>
+
+       </div>
+       <br>
+
+      <div class='input-group input-append datee col-md-1' id='dp3'>
+       <input type='text' class="datepicker" placeholder="Payment" />
+       </div>
   </div>
-
   <select multiple class="col-xs-2" id="multiselect">
       <option>--Select--</option>
       {% for key in emp_records_output %}
@@ -106,20 +110,20 @@
   <br><br>
   <input class="btn btn-default btn btn-primary" type="submit" value="Submit">
 
-  <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <script src="/static/js/bootstrap.js" rel="stylesheet" type="text/js">
-  <script src="/static/js/bootstrap-datepicker.js" rel="stylesheet" type="text/js">
-  <link href="/static/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
-  <script type='text/javascript'>
-      $(document).ready(function() {
-          $('.datepicker').datepicker({
-              autoclose: true,
-              startDate: new Date()
-          });
-      });
-      $('input[type="checkbox"]').on('change', function () {
-                    $('input[type="checkbox"]').not(this).prop('checked', false);
-                });
+  <script src="/static/js/jquery-3.1.0.min.js"></script>
+  <script src="/static/js/bootstrap.min.js" rel="stylesheet" type="text/js" ></script>
+  <script src="/static/js/bootstrap-datepicker.js" rel="script"></script>
+<script type='text/javascript'>
+ $(document).ready(function() {
+    $('#datePicker')
+        .datepicker({
+            format: 'mm/dd/yyyy'
+        })
+   $('input[type="checkbox"]').on('change', function () {
+      $('input[type="checkbox"]').not(this).prop('checked', false);
+   });
+
+
   </script>
 
 </body>

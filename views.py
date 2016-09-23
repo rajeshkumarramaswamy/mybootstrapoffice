@@ -5,6 +5,7 @@ import simplejson
 import json
 import MySQLdb
 from django.http import HttpResponse
+from django.core.cache import cache, caches
 
 def index(request):
     lines_records = Productlines.objects.all()
@@ -52,14 +53,17 @@ def index(request):
                    'order_date_vs_orders': order_date_vs_orders})
 
 
-def layout(request):
-    return render(request, 'layout.html')
-
 def mysql_connection(db_name='classicmodels'):
     conn = MySQLdb.connect(db=db_name, host='localhost', user='root', passwd='python@123')
     cursor = conn.cursor()
     return conn, cursor
 
+def layout(request):
+
+    layout_product_data = [cache_products(product=product)]
+    layout_productlines_data = [cache_plines(plines=None)]
+
+    return render(request, 'layout.html', {'layout_productlines_data': layout_productlines_data, 'layout_product_data': layout_product_data, })
 
 def display(request):
     from_date = request.GET['from']
@@ -92,6 +96,7 @@ def display(request):
 
             for p_record in p_records:
                 productName = p_record[0]
+
                 output = {'lastName': lastName, 'firstName': firstName,
                           'productCode': productCode, 'customerName': customerName, 'jobTitle': jobTitle,
                           'customerName': customerName, 'contactLastName': contactLastName,
@@ -102,3 +107,28 @@ def display(request):
 
     return HttpResponse(simplejson.dumps({'dtable': processed_records}), content_type="application/json")
 
+def react(request):
+    return render(request, 'react.html')
+
+def cache_plines(plines=None):
+    cached_data_plines = cache.get(plines)
+    conn, cursor = mysql_connection()
+    if not cached_data_plines:
+        query = 'select productLine from productLines'
+        cursor.execute(query)
+        plines = cursor.fetchall()
+    else:
+        cached_data_plines = cache.set('plines', plines, 60)
+        import pdb; pdb.set_trace()
+    return plines
+
+def cache_products(product):
+    cached_data_products = cache.get('product')
+    conn, cursor = mysql_connection()
+    if not cached_data_products:
+        query = 'select productName from products'
+        cursor.execute(query)
+        product = cursor.fetchall()
+    else:
+        cached_data_products = cache.set('products', product, 60)
+    return product
